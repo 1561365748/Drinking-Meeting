@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">历史记录 - 茶遇</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #FF6B9D;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FF8C42;
+            --dark-color: #2D3436;
+            --light-color: #FFF5F8;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            padding-bottom: 40px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .history-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Tab切换 */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            background: white;
+            color: #666;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-color: transparent;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 画像分析卡片 */
+        .profile-analysis {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .analysis-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .analysis-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* 画像标签 */
+        .profile-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .profile-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .tag-flavor {
+            background: linear-gradient(135deg, #FFE4EC, #FFF5F8);
+            color: var(--primary-color);
+        }
+
+        .tag-brand {
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            color: #4CAF50;
+        }
+
+        .tag-sugar {
+            background: linear-gradient(135deg, #FFF3E0, #FFF8E1);
+            color: var(--accent-color);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--light-color), #fff);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* 图表容器 */
+        .chart-container {
+            height: 250px;
+            margin: 15px 0;
+        }
+
+        /* 偏好分析 */
+        .preference-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .preference-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .preference-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .preference-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .preference-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .preference-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* 历史卡片 */
+        .history-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.1);
+            transition: all 0.3s;
+        }
+
+        .history-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.15);
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--light-color), #fff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .history-brand {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .history-date {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .history-details {
+            display: flex;
+            gap: 20px;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .history-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 1.1rem;
+        }
+
+        .feedback {
+            background: var(--light-color);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .empty-desc {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        /* 时间筛选 */
+        .time-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 6px 15px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            color: #666;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .preference-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="bi bi-cup-straw"></i>茶遇
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/calorie" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-fire"></i> 热量计算
+                </a>
+                <a href="/recommend" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-stars"></i> 智能推荐
+                </a>
+                <a href="/profile" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-person"></i> 个人中心
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="history-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="bi bi-clock-history" style="color: var(--primary-color);"></i> 历史与分析</h1>
+            <p class="text-muted">查看点单历史，分析你的口味偏好</p>
+        </div>
+
+        <!-- Tab切换 -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('analysis')">
+                <i class="bi bi-graph-pie"></i> 画像分析
+            </button>
+            <button class="tab-btn" onclick="switchTab('history')">
+                <i class="bi bi-list-ul"></i> 历史记录
+            </button>
+        </div>
+
+        <!-- 画像分析Tab -->
+        <div class="tab-content active" id="analysis-tab">
+            <!-- 时间筛选 -->
+            <div class="time-filter">
+                <button class="filter-btn active" onclick="filterByTime('all', this)">全部</button>
+                <button class="filter-btn" onclick="filterByTime('7', this)">近7天</button>
+                <button class="filter-btn" onclick="filterByTime('30', this)">近30天</button>
+            </div>
+
+            <!-- 统计概览 -->
+            <div class="profile-analysis">
+                <h4 class="analysis-title"><i class="bi bi-bar-chart-line"></i> 消费概览</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">总点单</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgRating">-</div>
+                        <div class="stat-label">平均评分</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgCalorie">-</div>
+                        <div class="stat-label">平均热量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCalorie">0</div>
+                        <div class="stat-label">累计热量</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户画像标签 -->
+            <div class="profile-analysis">
+                <h4 class="analysis-title"><i class="bi bi-person-lines-fill"></i> 你的口味画像</h4>
+                <div class="profile-tags" id="profileTags">
+                    <!-- 动态加载 -->
+                </div>
+                <div class="preference-section">
+                    <div class="preference-item">
+                        <div class="preference-label">最爱品牌</div>
+                        <div class="preference-value" id="topBrand">-</div>
+                        <div class="preference-bar">
+                            <div class="preference-bar-fill" id="topBrandBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="preference-item">
+                        <div class="preference-label">偏好糖度</div>
+                        <div class="preference-value" id="avgSugar">-</div>
+                        <div class="preference-bar">
+                            <div class="preference-bar-fill" id="avgSugarBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="preference-item">
+                        <div class="preference-label">首选温度</div>
+                        <div class="preference-value" id="topTemp">-</div>
+                        <div class="preference-bar">
+                            <div class="preference-bar-fill" id="topTempBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="preference-item">
+                        <div class="preference-label">口味偏好</div>
+                        <div class="preference-value" id="topFlavor">-</div>
+                        <div class="preference-bar">
+                            <div class="preference-bar-fill" id="topFlavorBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 品牌偏好图表 -->
+            <div class="profile-analysis">
+                <h4 class="analysis-title"><i class="bi bi-pie-chart"></i> 品牌偏好分布</h4>
+                <div class="chart-container" id="brandChart"></div>
+            </div>
+
+            <!-- 热量趋势图表 -->
+            <div class="profile-analysis">
+                <h4 class="analysis-title"><i class="bi bi-graph-up"></i> 热量摄入趋势</h4>
+                <div class="chart-container" id="calorieChart"></div>
+            </div>
+        </div>
+
+        <!-- 历史记录Tab -->
+        <div class="tab-content" id="history-tab">
+            <div id="historyList">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allHistory = [];
+        let filteredHistory = [];
+        let brandChart = null;
+        let calorieChart = null;
+
+        // Tab切换
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+
+        // 时间筛选
+        function filterByTime(days, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (days === 'all') {
+                filteredHistory = [...allHistory];
+            } else {
+                const daysAgo = parseInt(days);
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - daysAgo);
+                filteredHistory = allHistory.filter(item => {
+                    if (!item.selectionTime) return false;
+                    return new Date(item.selectionTime) >= cutoff;
+                });
+            }
+
+            updateAnalysis();
+        }
+
+        // 检查登录状态
+        function checkLogin() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login';
+                return null;
+            }
+            return userId;
+        }
+
+        // 加载数据
+        async function loadData() {
+            const userId = checkLogin();
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const result = await response.json();
+
+                if (result.success && result.user) {
+                    allHistory = result.user.historySelections || [];
+                    filteredHistory = [...allHistory];
+
+                    if (allHistory.length === 0) {
+                        showEmptyState();
+                        return;
+                    }
+
+                    updateAnalysis();
+                    renderHistoryList(allHistory.slice().reverse());
+                    initCharts();
+                } else {
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Load data error:', error);
+                showEmptyState();
+            }
+        }
+
+        // 更新分析数据
+        function updateAnalysis() {
+            const history = filteredHistory;
+
+            // 基础统计
+            document.getElementById('totalCount').textContent = history.length;
+
+            const ratings = history.filter(h => h.likeRating).map(h => h.likeRating);
+            const avgRating = ratings.length > 0
+                ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+                : '-';
+            document.getElementById('avgRating').textContent = avgRating;
+
+            const calories = history.filter(h => h.calorie).map(h => h.calorie);
+            const avgCalorie = calories.length > 0
+                ? Math.round(calories.reduce((a, b) => a + b, 0) / calories.length)
+                : '-';
+            document.getElementById('avgCalorie').textContent = avgCalorie;
+
+            const totalCalorie = calories.length > 0
+                ? calories.reduce((a, b) => a + b, 0)
+                : 0;
+            document.getElementById('totalCalorie').textContent = totalCalorie;
+
+            // 画像标签
+            generateProfileTags(history);
+
+            // 偏好分析
+            analyzePreferences(history);
+
+            // 更新图表
+            if (brandChart) updateBrandChart(history);
+            if (calorieChart) updateCalorieChart(history);
+        }
+
+        // 生成画像标签
+        function generateProfileTags(history) {
+            const tags = [];
+
+            // 品牌标签
+            const brands = {};
+            history.forEach(h => {
+                if (h.brandName) brands[h.brandName] = (brands[h.brandName] || 0) + 1;
+            });
+            const topBrand = Object.entries(brands).sort((a, b) => b[1] - a[1])[0];
+            if (topBrand) tags.push({ text: topBrand[0] + '爱好者', type: 'brand' });
+
+            // 糖度标签
+            const sugars = {};
+            history.forEach(h => {
+                if (h.sugarLevel) sugars[h.sugarLevel] = (sugars[h.sugarLevel] || 0) + 1;
+            });
+            const topSugar = Object.entries(sugars).sort((a, b) => b[1] - a[1])[0];
+            if (topSugar) tags.push({ text: topSugar[0], type: 'sugar' });
+
+            // 口味标签
+            const flavors = ['果茶', '奶茶', '清爽', '浓郁', '甜'];
+            flavors.forEach(flavor => {
+                const count = history.filter(h =>
+                    h.productName && h.productName.includes(flavor)
+                ).length;
+                if (count >= 2) tags.push({ text: flavor + '控', type: 'flavor' });
+            });
+
+            // 热量标签
+            const avgCal = history.filter(h => h.calorie).reduce((sum, h) => sum + h.calorie, 0) /
+                          history.filter(h => h.calorie).length || 0;
+            if (avgCal < 200) tags.push({ text: '低卡达人', type: 'flavor' });
+
+            const container = document.getElementById('profileTags');
+            container.innerHTML = tags.slice(0, 6).map(tag =>
+                `<span class="profile-tag tag-${tag.type}">${tag.text}</span>`
+            ).join('');
+        }
+
+        // 偏好分析
+        function analyzePreferences(history) {
+            // 最爱品牌
+            const brands = {};
+            history.forEach(h => {
+                if (h.brandName) brands[h.brandName] = (brands[h.brandName] || 0) + 1;
+            });
+            const topBrand = Object.entries(brands).sort((a, b) => b[1] - a[1])[0];
+            if (topBrand) {
+                document.getElementById('topBrand').textContent = topBrand[0];
+                document.getElementById('topBrandBar').style.width =
+                    Math.round(topBrand[1] / history.length * 100) + '%';
+            }
+
+            // 糖度偏好
+            const sugars = {};
+            history.forEach(h => {
+                if (h.sugarLevel) sugars[h.sugarLevel] = (sugars[h.sugarLevel] || 0) + 1;
+            });
+            const topSugar = Object.entries(sugars).sort((a, b) => b[1] - a[1])[0];
+            if (topSugar) {
+                document.getElementById('avgSugar').textContent = topSugar[0];
+                document.getElementById('avgSugarBar').style.width =
+                    Math.round(topSugar[1] / history.length * 100) + '%';
+            }
+
+            // 温度偏好
+            const temps = {};
+            history.forEach(h => {
+                if (h.temperature) temps[h.temperature] = (temps[h.temperature] || 0) + 1;
+            });
+            const topTemp = Object.entries(temps).sort((a, b) => b[1] - a[1])[0];
+            if (topTemp) {
+                document.getElementById('topTemp').textContent = topTemp[0];
+                document.getElementById('topTempBar').style.width =
+                    Math.round(topTemp[1] / history.length * 100) + '%';
+            }
+
+            // 口味偏好
+            const flavorKeywords = {
+                '果茶': ['葡萄', '橙', '柠檬', '草莓', '莓', '芒果', '桃', '西瓜', '百香果', '柚'],
+                '奶茶': ['奶茶', '牛乳', '拿铁', '鲜奶'],
+                '清爽': ['清爽', '清茶', '绿茶', '四季春', '茉莉'],
+                '浓郁': ['浓郁', '芝士', '奶盖', '波波', '珍珠']
+            };
+
+            const flavorCounts = {};
+            Object.keys(flavorKeywords).forEach(flavor => {
+                flavorCounts[flavor] = history.filter(h =>
+                    h.productName && flavorKeywords[flavor].some(k => h.productName.includes(k))
+                ).length;
+            });
+
+            const topFlavor = Object.entries(flavorCounts).filter(f => f[1] > 0)
+                .sort((a, b) => b[1] - a[1])[0];
+            if (topFlavor) {
+                document.getElementById('topFlavor').textContent = topFlavor[0];
+                document.getElementById('topFlavorBar').style.width =
+                    Math.round(topFlavor[1] / history.length * 100) + '%';
+            }
+        }
+
+        // 初始化图表
+        function initCharts() {
+            brandChart = echarts.init(document.getElementById('brandChart'));
+            calorieChart = echarts.init(document.getElementById('calorieChart'));
+            updateBrandChart(filteredHistory);
+            updateCalorieChart(filteredHistory);
+
+            window.addEventListener('resize', () => {
+                brandChart.resize();
+                calorieChart.resize();
+            });
+        }
+
+        // 更新品牌图表
+        function updateBrandChart(history) {
+            const brands = {};
+            history.forEach(h => {
+                if (h.brandName) brands[h.brandName] = (brands[h.brandName] || 0) + 1;
+            });
+
+            const data = Object.entries(brands).map(([name, value]) => ({ name, value }));
+
+            brandChart.setOption({
+                tooltip: { trigger: 'item', formatter: '{b}: {c}次 ({d}%)' },
+                legend: { bottom: 0, left: 'center' },
+                color: ['#FF6B9D', '#FF8C42', '#4CAF50', '#2196F3', '#9C27B0', '#FF5722', '#795548', '#607D8B'],
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    center: ['50%', '45%'],
+                    label: { show: false },
+                    data: data
+                }]
+            });
+        }
+
+        // 更新热量趋势图表
+        function updateCalorieChart(history) {
+            const recentHistory = history.slice(-10).reverse();
+            const dates = recentHistory.map(h =>
+                h.selectionTime ? new Date(h.selectionTime).toLocaleDateString('zh-CN', {month: 'numeric', day: 'numeric'}) : ''
+            );
+            const calories = recentHistory.map(h => h.calorie || 0);
+
+            calorieChart.setOption({
+                tooltip: { trigger: 'axis' },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    axisLabel: { rotate: 30, fontSize: 10 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '热量(大卡)',
+                    axisLabel: { fontSize: 10 }
+                },
+                series: [{
+                    type: 'line',
+                    data: calories,
+                    smooth: true,
+                    itemStyle: { color: '#FF6B9D' },
+                    areaStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0, y: 0, x2: 0, y2: 1,
+                            colorStops: [
+                                { offset: 0, color: 'rgba(255,107,157,0.3)' },
+                                { offset: 1, color: 'rgba(255,107,157,0.05)' }
+                            ]
+                        }
+                    },
+                    lineStyle: { width: 3 }
+                }]
+            });
+        }
+
+        // 渲染历史列表
+        function renderHistoryList(history) {
+            const container = document.getElementById('historyList');
+            container.innerHTML = '';
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <h3 class="empty-title">暂无历史记录</h3>
+                        <p class="empty-desc">你还没有选择过任何奶茶</p>
+                    </div>
+                `;
+                return;
+            }
+
+            history.forEach(item => {
+                const date = item.selectionTime
+                    ? new Date(item.selectionTime).toLocaleDateString('zh-CN')
+                    : '--';
+
+                const stars = item.likeRating
+                    ? '★'.repeat(item.likeRating) + '☆'.repeat(5 - item.likeRating)
+                    : '';
+
+                const emoji = getEmoji(item.productName);
+
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.innerHTML = `
+                    <div class="history-header">
+                        <div class="history-icon">${emoji}</div>
+                        <div class="history-info">
+                            <div class="history-name">${item.productName || '未知产品'}</div>
+                            <div class="history-brand">${item.brandName || ''}</div>
+                            <div class="history-date">${date}</div>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-item">
+                            <i class="bi bi-droplet"></i>
+                            <span>${item.sugarLevel || '标准糖'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-thermometer-half"></i>
+                            <span>${item.temperature || '常温'}</span>
+                        </div>
+                        ${item.calorie ? `
+                        <div class="detail-item">
+                            <i class="bi bi-fire"></i>
+                            <span>${item.calorie} 大卡</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ${item.likeRating ? `
+                    <div class="history-rating">
+                        <span class="stars">${stars}</span>
+                        <span class="text-muted">${item.likeRating}分</span>
+                    </div>
+                    ` : ''}
+                    ${item.feedback ? `
+                    <div class="feedback">
+                        <i class="bi bi-chat-quote"></i> ${item.feedback}
+                    </div>
+                    ` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 获取emoji
+        function getEmoji(name) {
+            if (!name) return '🥤';
+            if (name.includes('葡萄')) return '🍇';
+            if (name.includes('橙')) return '🍊';
+            if (name.includes('柠檬')) return '🍋';
+            if (name.includes('草莓') || name.includes('莓')) return '🍓';
+            if (name.includes('芒果') || name.includes('杨枝')) return '🥭';
+            if (name.includes('桃')) return '🍑';
+            if (name.includes('西瓜')) return '🍉';
+            if (name.includes('椰')) return '🥥';
+            if (name.includes('抹茶') || name.includes('绿茶') || name.includes('四季')) return '🍵';
+            if (name.includes('咖啡')) return '☕';
+            if (name.includes('波波') || name.includes('珍珠')) return '🧋';
+            return '🥤';
+        }
+
+        // 显示空状态
+        function showEmptyState() {
+            document.getElementById('analysis-tab').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3 class="empty-title">暂无数据</h3>
+                    <p class="empty-desc">你还没有点单记录，无法生成画像分析</p>
+                    <a href="/recommend" class="btn btn-lg" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; border-radius: 25px; padding: 12px 30px;">
+                        <i class="bi bi-stars"></i> 获取智能推荐
+                    </a>
+                </div>
+            `;
+            document.getElementById('history-tab').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <h3 class="empty-title">暂无历史记录</h3>
+                    <p class="empty-desc">你还没有选择过任何奶茶</p>
+                </div>
+            `;
+        }
+
+        // 初始化
+        window.onload = function() {
+            loadData();
+        };
+    </script>
+</body>
+</html>

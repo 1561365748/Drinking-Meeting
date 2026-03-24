@@ -1,0 +1,64 @@
+{
+	"users":[
+		{
+			"allergies":[],
+			"diseaseHistory":[],
+			"historySelections":[
+				
+			],
+			"preferLowCalorie":false,
+			"preferredFlavors":[],
+			"sweetLevel":3,
+			"userId":"13800138001"
+		},
+		{
+			"allergies":["草莓过敏"],
+			"diseaseHistory":["无"],
+			"historySelections":[
+				{
+					"brandName":"茶百道",
+					"feedback":"芋圆不好",
+					"likeRating":4,
+					"productId":402,
+					"productName":"豆乳玉麒麟",
+					"recommendSource":"deepseek",
+					"sugarLevel":"三分甜",
+					"temperature":"常温",
+					"toppingIds":[],
+					"toppingNames":["芋圆"]
+				},
+				{
+					"brandName":"CoCo都可",
+					"feedback":"我很不喜欢芋圆，珍珠，但喜欢芒果，烧仙草",
+					"likeRating":4,
+					"productId":705,
+					"productName":"杨枝甘露烧仙草",
+					"recommendSource":"deepseek",
+					"selectionTime":"2026-03-21 15:23:38.845832900",
+					"sugarLevel":"三分甜",
+					"temperature":"少冰",
+					"toppingIds":[],
+					"toppingNames":["烧仙草","西米"]
+				}
+			],
+			"lastLoginTime":"2026-03-21 13:48:41.884798500",
+			"preferLowCalorie":false,
+			"preferredFlavors":["清爽"],
+			"sweetLevel":2,
+			"userId":"13800138000"
+		},
+		{
+			"allergies":[],
+			"diseaseHistory":[],
+			"historySelections":[
+				
+			],
+			"lastLoginTime":"2026-03-21 13:37:43.790088700",
+			"preferLowCalorie":false,
+			"preferredFlavors":[],
+			"registerTime":"2026-03-21 13:37:43.790088700",
+			"sweetLevel":3,
+			"userId":"12345"
+		}
+	]
+}

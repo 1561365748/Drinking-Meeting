@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">智能推荐 - 奶茶君</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B9D;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FF8C42;
+            --dark-color: #2D3436;
+            --light-color: #FFF5F8;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .preference-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .preference-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .preference-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* 品牌选择 */
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .brand-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .brand-card.selected {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .brand-name {
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        /* 选项卡片 */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .option-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        .option-name {
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.85rem;
+        }
+
+        /* 甜度滑块 */
+        .sweet-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .sweet-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* 文本域 */
+        .note-textarea {
+            border-radius: 12px;
+            border: 2px solid #eee;
+            padding: 15px;
+            font-size: 1rem;
+            resize: none;
+            transition: all 0.3s;
+        }
+
+        .note-textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 157, 0.25);
+        }
+
+        /* 推荐按钮 */
+        .recommend-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .recommend-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+
+        .recommend-btn:disabled {
+            background: #ccc;
+            transform: none;
+        }
+
+        /* 用户信息提示 */
+        .user-info-banner {
+            background: linear-gradient(135deg, var(--light-color) 0%, #fff 100%);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-info-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .user-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .user-tag {
+            background: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+            border: 1px solid #eee;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            .brand-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="bi bi-cup-straw"></i>奶茶君
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/calorie" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-fire"></i> 热量计算
+                </a>
+                <a href="/history" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-clock-history"></i> 历史
+                </a>
+                <a href="/profile" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-person"></i> 个人中心
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">AI正在为您精心挑选...</div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="bi bi-stars" style="color: var(--primary-color);"></i> 智能推荐</h1>
+            <p class="text-muted">选择您的偏好，三种推荐方法为您精准匹配</p>
+        </div>
+
+        <!-- 用户信息提示 -->
+        <div class="user-info-banner">
+            <div>
+                <div class="user-info-text">
+                    <i class="bi bi-info-circle"></i>
+                    已根据您的个人档案过滤推荐，
+                    <a href="/profile">点击修改</a>
+                </div>
+            </div>
+            <div class="user-tags" id="userTags">
+                <!-- 动态加载用户标签 -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- 品牌选择 -->
+                <div class="preference-card">
+                    <h4 class="preference-title"><i class="bi bi-shop"></i> 选择品牌（可多选，不选则推荐所有品牌）</h4>
+                    <div class="brand-grid" id="brandOptions">
+                        <div class="brand-card" onclick="toggleBrand(this, 1)">
+                            <div class="brand-logo">🍵</div>
+                            <div class="brand-name">喜茶</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 2)">
+                            <div class="brand-logo">🧋</div>
+                            <div class="brand-name">奈雪的茶</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 3)">
+                            <div class="brand-logo">❄️</div>
+                            <div class="brand-name">蜜雪冰城</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 4)">
+                            <div class="brand-logo">🫖</div>
+                            <div class="brand-name">茶百道</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 5)">
+                            <div class="brand-logo">🌿</div>
+                            <div class="brand-name">古茗</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 6)">
+                            <div class="brand-logo">🥤</div>
+                            <div class="brand-name">一点点</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 7)">
+                            <div class="brand-logo">🧊</div>
+                            <div class="brand-name">CoCo都可</div>
+                        </div>
+                        <div class="brand-card" onclick="toggleBrand(this, 8)">
+                            <div class="brand-logo">🍮</div>
+                            <div class="brand-name">书亦烧仙草</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 口味偏好 -->
+                <div class="preference-card">
+                    <h4 class="preference-title"><i class="bi bi-heart"></i> 口味偏好（可多选）</h4>
+                    <div class="option-grid" id="flavorOptions">
+                        <div class="option-card" onclick="toggleOption(this, 'flavor', '甜')">
+                            <div class="option-icon">🍯</div>
+                            <div class="option-name">甜</div>
+                        </div>
+                        <div class="option-card" onclick="toggleOption(this, 'flavor', '清爽')">
+                            <div class="option-icon">🍃</div>
+                            <div class="option-name">清爽</div>
+                        </div>
+                        <div class="option-card" onclick="toggleOption(this, 'flavor', '浓郁')">
+                            <div class="option-icon">🧀</div>
+                            <div class="option-name">浓郁</div>
+                        </div>
+                        <div class="option-card" onclick="toggleOption(this, 'flavor', '果茶')">
+                            <div class="option-icon">🍇</div>
+                            <div class="option-name">果茶</div>
+                        </div>
+                        <div class="option-card" onclick="toggleOption(this, 'flavor', '奶茶')">
+                            <div class="option-icon">🥤</div>
+                            <div class="option-name">奶茶</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 甜度偏好 -->
+                <div class="preference-card">
+                    <h4 class="preference-title"><i class="bi bi-sliders"></i> 甜度偏好</h4>
+                    <input type="range" class="form-range sweet-slider" id="sweetLevel" min="1" max="5" value="3">
+                    <div class="sweet-labels">
+                        <span>无糖</span>
+                        <span>三分甜</span>
+                        <span>半糖</span>
+                        <span>七分甜</span>
+                        <span>全糖</span>
+                    </div>
+                </div>
+
+                <!-- 特殊偏好 -->
+                <div class="preference-card">
+                    <h4 class="preference-title"><i class="bi bi-lightning"></i> 特殊偏好</h4>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="preferLowCalorie">
+                        <label class="form-check-label" for="preferLowCalorie">
+                            🥗 优先推荐低卡路里产品
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 备注 -->
+                <div class="preference-card">
+                    <h4 class="preference-title"><i class="bi bi-chat-text"></i> 其他备注</h4>
+                    <textarea class="form-control note-textarea" id="noteText" rows="3"
+                              placeholder="例如：今天想喝点清爽的、不要太甜、想尝试新品..."></textarea>
+                </div>
+
+                <!-- 推荐按钮 -->
+                <button class="recommend-btn" onclick="getRecommendations()" id="recommendBtn">
+                    <i class="bi bi-magic"></i> 获取三种推荐
+                </button>
+            </div>
+
+            <!-- 右侧提示 -->
+            <div class="col-lg-4">
+                <div class="preference-card" style="position: sticky; top: 100px;">
+                    <h4 class="preference-title"><i class="bi bi-lightbulb"></i> 推荐说明</h4>
+                    <div class="text-muted small">
+                        <p><strong>🤖 Deepseek辅助</strong></p>
+                        <p>AI大模型根据您的偏好和档案，智能生成个性化推荐</p>
+
+                        <hr>
+
+                        <p><strong>📊 传统推荐</strong></p>
+                        <p>基于协同过滤算法，分析相似用户的喜好进行推荐</p>
+
+                        <hr>
+
+                        <p><strong>🎯 智能匹配</strong></p>
+                        <p>使用词向量技术，计算产品特征与您偏好的相似度</p>
+
+                        <hr>
+
+                        <p><i class="bi bi-info-circle"></i> 三种方法各有特色，可对比参考选择</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 选择状态
+        const selections = {
+            brands: [],
+            flavors: []
+        };
+
+        // 品牌切换
+        function toggleBrand(element, brandId) {
+            element.classList.toggle('selected');
+            const index = selections.brands.indexOf(brandId);
+            if (index > -1) {
+                selections.brands.splice(index, 1);
+            } else {
+                selections.brands.push(brandId);
+            }
+        }
+
+        // 选项切换
+        function toggleOption(element, type, value) {
+            element.classList.toggle('selected');
+            const index = selections[type].indexOf(value);
+            if (index > -1) {
+                selections[type].splice(index, 1);
+            } else {
+                selections[type].push(value);
+            }
+        }
+
+        // 获取推荐
+        async function getRecommendations() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('请先登录');
+                window.location.href = '/login';
+                return;
+            }
+
+            const btn = document.getElementById('recommendBtn');
+            const loading = document.getElementById('loadingOverlay');
+
+            btn.disabled = true;
+            loading.classList.add('show');
+
+            const requestData = {
+                userId: userId,
+                brandIds: selections.brands,
+                preferredFlavors: selections.flavors,
+                sweetLevel: parseInt(document.getElementById('sweetLevel').value),
+                preferLowCalorie: document.getElementById('preferLowCalorie').checked,
+                note: document.getElementById('noteText').value.trim()
+            };
+
+            try {
+                const response = await fetch('/api/recommend/all', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 保存推荐结果到本地存储
+                    localStorage.setItem('recommendResult', JSON.stringify(result));
+                    // 跳转到结果页面
+                    window.location.href = '/recommend/result';
+                } else {
+                    alert(result.message || '推荐失败，请重试');
+                }
+            } catch (error) {
+                console.error('Recommend error:', error);
+                alert('网络错误，请重试');
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        // 加载用户信息
+        async function loadUserInfo() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const result = await response.json();
+
+                if (result.success && result.user) {
+                    const user = result.user;
+                    const tagsContainer = document.getElementById('userTags');
+
+                    // 显示用户标签
+                    if (user.allergies && user.allergies.length > 0) {
+                        user.allergies.forEach(allergy => {
+                            if (allergy !== '无') {
+                                tagsContainer.innerHTML += `<span class="user-tag">${allergy}</span>`;
+                            }
+                        });
+                    }
+
+                    if (user.diseaseHistory && user.diseaseHistory.length > 0) {
+                        user.diseaseHistory.forEach(disease => {
+                            if (disease !== '无') {
+                                tagsContainer.innerHTML += `<span class="user-tag">${disease}</span>`;
+                            }
+                        });
+                    }
+
+                    // 预设用户偏好
+                    if (user.preferredFlavors && user.preferredFlavors.length > 0) {
+                        user.preferredFlavors.forEach(flavor => {
+                            selections.flavors.push(flavor);
+                            const cards = document.querySelectorAll('#flavorOptions .option-card');
+                            cards.forEach(card => {
+                                if (card.querySelector('.option-name').textContent === flavor) {
+                                    card.classList.add('selected');
+                                }
+                            });
+                        });
+                    }
+
+                    if (user.sweetLevel) {
+                        document.getElementById('sweetLevel').value = user.sweetLevel;
+                    }
+
+                    if (user.preferLowCalorie) {
+                        document.getElementById('preferLowCalorie').checked = true;
+                    }
+                }
+            } catch (error) {
+                console.error('Load user info error:', error);
+            }
+        }
+
+        // 初始化
+        window.onload = function() {
+            loadUserInfo();
+        };
+    </script>
+</body>
+</html>

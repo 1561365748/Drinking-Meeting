@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">推荐结果 - 奶茶君</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B9D;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FF8C42;
+            --dark-color: #2D3436;
+            --light-color: #FFF5F8;
+            --deepseek-color: #6366f1;
+            --traditional-color: #10b981;
+            --smart-color: #f59e0b;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            padding-bottom: 40px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        /* 推荐方法标签页 */
+        .method-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .method-tab {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            background: white;
+            color: #666;
+        }
+
+        .method-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .method-tab.active {
+            color: white;
+        }
+
+        .method-tab.deepseek.active {
+            background: var(--deepseek-color);
+            border-color: var(--deepseek-color);
+        }
+
+        .method-tab.traditional.active {
+            background: var(--traditional-color);
+            border-color: var(--traditional-color);
+        }
+
+        .method-tab.smart.active {
+            background: var(--smart-color);
+            border-color: var(--smart-color);
+        }
+
+        .method-tab .method-icon {
+            margin-right: 8px;
+        }
+
+        /* 推荐区域 */
+        .recommend-section {
+            display: none;
+        }
+
+        .recommend-section.active {
+            display: block;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .section-badge.deepseek { background: var(--deepseek-color); }
+        .section-badge.traditional { background: var(--traditional-color); }
+        .section-badge.smart { background: var(--smart-color); }
+
+        .section-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* 推荐卡片 - 上3下2布局 */
+        .recommend-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .recommend-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        /* 第二行只有2个卡片时居中显示 */
+        .recommend-grid .recommend-card:nth-child(4) {
+            grid-column: 1 / 2;
+            justify-self: end;
+        }
+        .recommend-grid .recommend-card:nth-child(5) {
+            grid-column: 3 / 4;
+            justify-self: start;
+        }
+
+        .recommend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.2);
+        }
+
+        .card-image-wrapper {
+            position: relative;
+            height: 180px;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-rank {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+        .rank-other { background: var(--primary-color); }
+
+        .card-level {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .card-brand {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .card-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin: 6px 0;
+        }
+
+        .card-stars {
+            color: #ffc107;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .card-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .card-info i {
+            margin-right: 4px;
+        }
+
+        .card-reason {
+            background: var(--light-color);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .card-reason i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .card-tag {
+            background: #f0f0f0;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .card-actions {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .select-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        /* 反馈弹窗 */
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-modal.show {
+            display: flex;
+        }
+
+        .feedback-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .feedback-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .feedback-product {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+        }
+
+        .star-rating .star {
+            font-size: 1.8rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .star-rating .star:hover,
+        .star-rating .star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1rem;
+            resize: none;
+            transition: all 0.3s;
+        }
+
+        .feedback-textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .feedback-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .feedback-btn.cancel {
+            background: #f0f0f0;
+            border: none;
+            color: #666;
+        }
+
+        .feedback-btn.submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            color: white;
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .method-tabs {
+                gap: 10px;
+            }
+            .method-tab {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            .recommend-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="bi bi-cup-straw"></i>奶茶君
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/calorie" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-fire"></i> 热量计算
+                </a>
+                <a href="/recommend" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-arrow-left"></i> 重新选择
+                </a>
+                <a href="/history" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-clock-history"></i> 历史
+                </a>
+                <a href="/profile" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-person"></i> 个人中心
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="bi bi-stars" style="color: var(--primary-color);"></i> 为您推荐</h1>
+            <p class="text-muted">三种推荐方法，供您参考选择</p>
+        </div>
+
+        <!-- 推荐方法标签页 -->
+        <div class="method-tabs">
+            <div class="method-tab deepseek active" onclick="switchMethod('deepseek')">
+                <span class="method-icon">🤖</span>Deepseek辅助
+            </div>
+            <div class="method-tab traditional" onclick="switchMethod('traditional')">
+                <span class="method-icon">📊</span>传统推荐
+            </div>
+            <div class="method-tab smart" onclick="switchMethod('smart')">
+                <span class="method-icon">🎯</span>智能匹配
+            </div>
+        </div>
+
+        <!-- Deepseek推荐区域 -->
+        <div class="recommend-section active" id="deepseek-section">
+            <div class="section-header">
+                <span class="section-badge deepseek">🤖 Deepseek AI辅助推荐</span>
+                <p class="section-desc">基于AI大模型，结合您的偏好和档案智能生成</p>
+            </div>
+            <div class="recommend-grid" id="deepseek-grid">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+
+        <!-- 传统推荐区域 -->
+        <div class="recommend-section" id="traditional-section">
+            <div class="section-header">
+                <span class="section-badge traditional">📊 传统推荐（协同过滤）</span>
+                <p class="section-desc">基于相似用户的喜好进行推荐</p>
+            </div>
+            <div class="recommend-grid" id="traditional-grid">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+
+        <!-- 智能匹配推荐区域 -->
+        <div class="recommend-section" id="smart-section">
+            <div class="section-header">
+                <span class="section-badge smart">🎯 智能匹配（词向量）</span>
+                <p class="section-desc">使用词向量技术计算产品与您偏好的相似度</p>
+            </div>
+            <div class="recommend-grid" id="smart-grid">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 反馈弹窗 -->
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <div class="feedback-header">
+                <div class="feedback-title">选择此饮品</div>
+                <div class="feedback-product" id="feedbackProductName"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">您给这杯奶茶打几分？</label>
+                <div class="star-rating" id="starRating">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">您选择的糖度</label>
+                <select class="form-select" id="feedbackSugar">
+                    <option value="无糖">无糖</option>
+                    <option value="三分甜">三分甜</option>
+                    <option value="半糖" selected>半糖</option>
+                    <option value="七分甜">七分甜</option>
+                    <option value="全糖">全糖</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">您选择的温度</label>
+                <select class="form-select" id="feedbackTemp">
+                    <option value="热">热</option>
+                    <option value="常温">常温</option>
+                    <option value="去冰" selected>去冰</option>
+                    <option value="少冰">少冰</option>
+                    <option value="正常冰">正常冰</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">其他反馈（可选）</label>
+                <textarea class="feedback-textarea" id="feedbackText" rows="3"
+                          placeholder="告诉我们您对这杯奶茶的感受..."></textarea>
+            </div>
+
+            <div class="feedback-actions">
+                <button class="feedback-btn cancel" onclick="closeFeedback()">取消</button>
+                <button class="feedback-btn submit" onclick="submitFeedback()">确认选择</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 推荐数据
+        let recommendData = null;
+        let currentProduct = null;
+        let currentSource = null;
+        let selectedRating = 0;
+
+        // 切换推荐方法
+        function switchMethod(method) {
+            // 更新标签状态
+            document.querySelectorAll('.method-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.method-tab.${method}`).classList.add('active');
+
+            // 更新显示区域
+            document.querySelectorAll('.recommend-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${method}-section`).classList.add('active');
+        }
+
+        // 渲染推荐卡片
+        function renderRecommendations(items, containerId, source) {
+            const container = document.getElementById(containerId);
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>暂无推荐结果</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map((item, index) => {
+                const rankClass = index < 3 ? `rank-${index + 1}` : 'rank-other';
+                const stars = '★'.repeat(item.recommendLevel || 3) + '☆'.repeat(5 - (item.recommendLevel || 3));
+
+                // 使用占位图或实际图片
+                const imageUrl = item.imageUrl || `https://via.placeholder.com/300x180/FFE4EC/FF6B9D?text=${encodeURIComponent(item.productName || '奶茶')}`;
+
+                return `
+                    <div class="recommend-card">
+                        <div class="card-image-wrapper">
+                            <img src="${imageUrl}" alt="${item.productName}" class="card-image"
+                                 onerror="this.src='https://via.placeholder.com/300x180/FFE4EC/FF6B9D?text=奶茶'">
+                            <div class="card-rank ${rankClass}">${index + 1}</div>
+                            <div class="card-level">推荐度 ${item.recommendLevel || 3}星</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-brand">${item.brandName || '推荐'}</div>
+                            <div class="card-name">${item.productName}</div>
+                            <div class="card-stars">${stars}</div>
+                            <div class="card-info">
+                                <span><i class="bi bi-fire"></i>${item.calorie || '--'}大卡</span>
+                                <span><i class="bi bi-droplet"></i>${item.suggestedSugar || '半糖'}</span>
+                                <span><i class="bi bi-thermometer-half"></i>${item.suggestedTemperature || '常温'}</span>
+                            </div>
+                            <div class="card-reason">
+                                <i class="bi bi-lightbulb"></i>${item.recommendReason || '根据您的偏好推荐'}
+                            </div>
+                            ${item.tags && item.tags.length > 0 ? `
+                                <div class="card-tags">
+                                    ${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="card-actions">
+                                <button class="select-btn" onclick='selectProduct(${JSON.stringify(item)}, "${source}")'>
+                                    <i class="bi bi-check-lg"></i> 选择这杯
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 选择产品
+        function selectProduct(item, source) {
+            currentProduct = item;
+            currentSource = source;
+
+            document.getElementById('feedbackProductName').textContent =
+                `${item.brandName} - ${item.productName}`;
+
+            // 重置表单
+            selectedRating = 0;
+            document.querySelectorAll('.star-rating .star').forEach(star => {
+                star.classList.remove('active');
+            });
+            document.getElementById('feedbackSugar').value = item.suggestedSugar || '半糖';
+            document.getElementById('feedbackTemp').value = item.suggestedTemperature || '去冰';
+            document.getElementById('feedbackText').value = '';
+
+            document.getElementById('feedbackModal').classList.add('show');
+        }
+
+        // 星级评分点击
+        document.querySelectorAll('.star-rating .star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                document.querySelectorAll('.star-rating .star').forEach((s, i) => {
+                    if (i < selectedRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // 关闭反馈弹窗
+        function closeFeedback() {
+            document.getElementById('feedbackModal').classList.remove('show');
+        }
+
+        // 提交反馈
+        async function submitFeedback() {
+            if (!currentProduct) return;
+
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('请先登录');
+                window.location.href = '/login';
+                return;
+            }
+
+            const feedbackData = {
+                userId: userId,
+                productId: currentProduct.productId,
+                productName: currentProduct.productName,
+                brandName: currentProduct.brandName,
+                likeRating: selectedRating || 3,
+                sugarLevel: document.getElementById('feedbackSugar').value,
+                temperature: document.getElementById('feedbackTemp').value,
+                feedback: document.getElementById('feedbackText').value,
+                recommendSource: currentSource,
+                toppingNames: currentProduct.suggestedToppings || []
+            };
+
+            try {
+                const response = await fetch('/api/user/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('感谢您的反馈！我们会记住您的喜好~');
+                    closeFeedback();
+                } else {
+                    alert(result.message || '提交失败，请重试');
+                }
+            } catch (error) {
+                console.error('Submit feedback error:', error);
+                alert('网络错误，请重试');
+            }
+        }
+
+        // 加载推荐结果
+        function loadRecommendations() {
+            const dataStr = localStorage.getItem('recommendResult');
+
+            if (!dataStr) {
+                // 如果没有数据，返回推荐页面
+                window.location.href = '/recommend';
+                return;
+            }
+
+            recommendData = JSON.parse(dataStr);
+
+            if (recommendData.deepseekRecommendations) {
+                renderRecommendations(recommendData.deepseekRecommendations, 'deepseek-grid', 'deepseek');
+            }
+
+            if (recommendData.traditionalRecommendations) {
+                renderRecommendations(recommendData.traditionalRecommendations, 'traditional-grid', 'traditional');
+            }
+
+            if (recommendData.smartMatchRecommendations) {
+                renderRecommendations(recommendData.smartMatchRecommendations, 'smart-grid', 'smart');
+            }
+        }
+
+        // 页面加载
+        window.onload = function() {
+            // 检查登录状态
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login';
+                return;
+            }
+
+            loadRecommendations();
+        };
+    </script>
+</body>
+</html>

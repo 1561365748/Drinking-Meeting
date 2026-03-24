@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">奶茶君</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B9D;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FF8C42;
+            --dark-color: #2D3436;
+            --light-color: #FFF5F8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 100%);
+            min-height: 100vh;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-brand i {
+            margin-right: 8px;
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* Hero区域 */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        /* 功能卡片 */
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(255, 107, 157, 0.15);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255, 107, 157, 0.25);
+        }
+
+        .feature-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .feature-icon.calorie {
+            background: linear-gradient(135deg, #FF6B9D 0%, #FF8C42 100%);
+        }
+
+        .feature-icon.recommend {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .feature-icon.image {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 热门推荐区域 */
+        .hot-section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+
+        .hot-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .hot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);
+        }
+
+        .hot-rank {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+        .rank-other { background: var(--primary-color); }
+
+        .hot-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .hot-image-wrapper {
+            position: relative;
+        }
+
+        .hot-info {
+            padding: 20px;
+        }
+
+        .hot-brand {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .hot-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin: 8px 0;
+        }
+
+        .hot-calorie {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .hot-calorie span {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .hot-tags {
+            margin-top: 10px;
+        }
+
+        .hot-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: var(--light-color);
+            color: var(--primary-color);
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 30px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-cup-straw"></i>奶茶君
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-house"></i> 首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calorie"><i class="bi bi-calculator"></i> 热量计算</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recommend"><i class="bi bi-stars"></i> 智能推荐</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> 关于</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="hero-section" style="margin-top: 70px;">
+        <div class="container">
+            <h1 class="hero-title">🧋 奶茶君</h1>
+            <p class="hero-subtitle">您的专属奶茶健康顾问 · 计算热量 · 智能推荐 · 科学喝奶茶</p>
+            <div class="row justify-content-center g-4 mt-4">
+                <div class="col-md-4">
+                    <a href="/calorie" class="feature-card">
+                        <div class="feature-icon calorie">
+                            <i class="bi bi-fire"></i>
+                        </div>
+                        <h3 class="feature-title">热量计算</h3>
+                        <p class="feature-desc">输入奶茶信息，精确计算热量<br>获取健康建议和运动消耗方案</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/recommend" class="feature-card">
+                        <div class="feature-icon recommend">
+                            <i class="bi bi-magic"></i>
+                        </div>
+                        <h3 class="feature-title">智能推荐</h3>
+                        <p class="feature-desc">根据您的口味偏好和健康需求<br>推荐最适合您的奶茶</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/calorie?mode=image" class="feature-card">
+                        <div class="feature-icon image">
+                            <i class="bi bi-camera"></i>
+                        </div>
+                        <h3 class="feature-title">图片识别</h3>
+                        <p class="feature-desc">上传小料图片，AI智能识别<br>自动计算热量</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 热门推荐区域 -->
+    <section class="hot-section">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-fire"></i>本周热门TOP5</h2>
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-2-4" th:each="product, stat : ${hotProducts}">
+                    <div class="hot-card">
+                        <div class="hot-image-wrapper">
+                            <img class="hot-image" th:src="@{/img/placeholder.jpg}" alt="奶茶图片">
+                            <div class="hot-rank" th:classappend="${stat.index == 0} ? 'rank-1' : (${stat.index == 1} ? 'rank-2' : (${stat.index == 2} ? 'rank-3' : 'rank-other'))"
+                                 th:text="${stat.index + 1}">1</div>
+                        </div>
+                        <div class="hot-info">
+                            <div class="hot-brand" th:text="${product.brandName}">喜茶</div>
+                            <div class="hot-name" th:text="${product.productName}">多肉葡萄</div>
+                            <div class="hot-calorie">热度: <span th:text="${product.hotScore}">98</span>分</div>
+                            <div class="hot-tags">
+                                <span class="hot-tag" th:each="tag : ${product.tags}" th:text="${tag}">清爽</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能介绍 -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-lightning"></i>为什么选择奶茶君？</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="text-center p-4">
+                        <i class="bi bi-database-check" style="font-size: 3rem; color: var(--primary-color);"></i>
+                        <h5 class="mt-3 fw-bold">海量数据</h5>
+                        <p class="text-muted">覆盖8大主流品牌，50+奶茶产品，30+小料数据</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-4">
+                        <i class="bi bi-cpu" style="font-size: 3rem; color: var(--accent-color);"></i>
+                        <h5 class="mt-3 fw-bold">AI智能</h5>
+                        <p class="text-muted">协同过滤推荐算法，结合大众喜好精准推荐</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-4">
+                        <i class="bi bi-image" style="font-size: 3rem; color: #667eea;"></i>
+                        <h5 class="mt-3 fw-bold">图片识别</h5>
+                        <p class="text-muted">支持模糊、低光照图片，自动识别小料</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-4">
+                        <i class="bi bi-heart-pulse" style="font-size: 3rem; color: #38ef7d;"></i>
+                        <h5 class="mt-3 fw-bold">健康建议</h5>
+                        <p class="text-muted">个性化健康评估，运动消耗方案推荐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="footer-title"><i class="bi bi-cup-straw"></i> 奶茶君</div>
+                    <p class="text-white-50">让每一杯奶茶都喝得明明白白</p>
+                </div>
+                <div class="col-md-4 footer-links">
+                    <h6 class="fw-bold mb-3">快速链接</h6>
+                    <a href="/calorie">热量计算</a>
+                    <a href="/recommend">智能推荐</a>
+                    <a href="/about">关于我们</a>
+                </div>
+                <div class="col-md-4 footer-links">
+                    <h6 class="fw-bold mb-3">友情提示</h6>
+                    <p class="text-white-50 small">奶茶虽好，可不要贪杯哦~<br>建议每日添加糖摄入不超过25g</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2024 奶茶君 - 奶茶热量计算与推荐系统</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

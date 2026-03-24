@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">个人中心 - 奶茶君</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B9D;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FF8C42;
+            --dark-color: #2D3436;
+            --light-color: #FFF5F8;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+            padding-bottom: 40px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .profile-id {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .option-card {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        .option-name {
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.85rem;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+
+        .save-btn:disabled {
+            background: #ccc;
+            transform: none;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            background: var(--light-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .history-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .history-brand {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .history-meta {
+            text-align: right;
+        }
+
+        .history-rating {
+            color: #ffc107;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            background: #f8f9fa;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .logout-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .sweet-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .sweet-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .form-check {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .empty-history i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="bi bi-cup-straw"></i>奶茶君
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/calorie" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-fire"></i> 热量计算
+                </a>
+                <a href="/recommend" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-stars"></i> 智能推荐
+                </a>
+                <a href="/history" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-clock-history"></i> 历史
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <!-- 头部 -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div class="profile-name" id="profileName">用户</div>
+            <div class="profile-id" id="profileId">ID: --</div>
+        </div>
+
+        <!-- 统计 -->
+        <div class="profile-card">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">点单次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgRating">-</div>
+                    <div class="stat-label">平均评分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="favoriteBrand">-</div>
+                    <div class="stat-label">最爱品牌</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 疾病史 -->
+        <div class="profile-card">
+            <h4 class="card-title"><i class="bi bi-heart-pulse"></i> 疾病史（可多选）</h4>
+            <div class="option-grid" id="diseaseOptions">
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">🩺</div>
+                    <div class="option-name">糖尿病</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">💊</div>
+                    <div class="option-name">高血压</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">🏃</div>
+                    <div class="option-name">减肥中</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">💪</div>
+                    <div class="option-name">健身中</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">🤰</div>
+                    <div class="option-name">孕期</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'disease')">
+                    <div class="option-icon">✅</div>
+                    <div class="option-name">无</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 忌口/过敏 -->
+        <div class="profile-card">
+            <h4 class="card-title"><i class="bi bi-shield-x"></i> 忌口/过敏（可多选）</h4>
+            <div class="option-grid" id="allergyOptions">
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🥛</div>
+                    <div class="option-name">乳糖不耐受</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🥜</div>
+                    <div class="option-name">花生过敏</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🌰</div>
+                    <div class="option-name">坚果过敏</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🥭</div>
+                    <div class="option-name">芒果过敏</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🍓</div>
+                    <div class="option-name">草莓过敏</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">🧊</div>
+                    <div class="option-name">不能喝冷饮</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">☕</div>
+                    <div class="option-name">咖啡因敏感</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'allergy')">
+                    <div class="option-icon">✅</div>
+                    <div class="option-name">无</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 口味偏好 -->
+        <div class="profile-card">
+            <h4 class="card-title"><i class="bi bi-heart"></i> 口味偏好（可多选）</h4>
+            <div class="option-grid" id="flavorOptions">
+                <div class="option-card" onclick="toggleOption(this, 'flavor')">
+                    <div class="option-icon">🍯</div>
+                    <div class="option-name">甜</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'flavor')">
+                    <div class="option-icon">🍃</div>
+                    <div class="option-name">清爽</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'flavor')">
+                    <div class="option-icon">🧀</div>
+                    <div class="option-name">浓郁</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'flavor')">
+                    <div class="option-icon">🍇</div>
+                    <div class="option-name">果茶</div>
+                </div>
+                <div class="option-card" onclick="toggleOption(this, 'flavor')">
+                    <div class="option-icon">🥤</div>
+                    <div class="option-name">奶茶</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 甜度偏好 -->
+        <div class="profile-card">
+            <h4 class="card-title"><i class="bi bi-sliders"></i> 默认甜度偏好</h4>
+            <input type="range" class="form-range sweet-slider" id="sweetLevel" min="1" max="5" value="3">
+            <div class="sweet-labels">
+                <span>无糖</span>
+                <span>三分甜</span>
+                <span>半糖</span>
+                <span>七分甜</span>
+                <span>全糖</span>
+            </div>
+        </div>
+
+        <!-- 低卡偏好 -->
+        <div class="profile-card">
+            <h4 class="card-title"><i class="bi bi-lightning"></i> 特殊偏好</h4>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="preferLowCalorie">
+                <label class="form-check-label" for="preferLowCalorie">
+                    🥗 优先推荐低卡路里产品
+                </label>
+            </div>
+        </div>
+
+        <!-- 保存按钮 -->
+        <button class="save-btn" onclick="saveProfile()" id="saveBtn">
+            <i class="bi bi-check-lg"></i> 保存修改
+        </button>
+
+        <!-- 历史记录 -->
+        <div class="profile-card history-section">
+            <h4 class="card-title"><i class="bi bi-clock-history"></i> 历史记录</h4>
+            <div id="historyList">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+
+        <!-- 登出按钮 -->
+        <button class="logout-btn" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i> 退出登录
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 用户数据
+        let userData = null;
+        const selections = {
+            disease: [],
+            allergy: [],
+            flavor: []
+        };
+
+        // 选项切换
+        function toggleOption(element, type) {
+            element.classList.toggle('selected');
+            const name = element.querySelector('.option-name').textContent;
+
+            if (element.classList.contains('selected')) {
+                if (name === '无') {
+                    const siblings = element.parentElement.querySelectorAll('.option-card');
+                    siblings.forEach(sibling => {
+                        if (sibling !== element) {
+                            sibling.classList.remove('selected');
+                        }
+                    });
+                    selections[type] = ['无'];
+                } else {
+                    if (selections[type].includes('无')) {
+                        const noneCard = element.parentElement.querySelector('.option-card:last-child');
+                        if (noneCard) noneCard.classList.remove('selected');
+                        selections[type] = selections[type].filter(item => item !== '无');
+                    }
+                    if (!selections[type].includes(name)) {
+                        selections[type].push(name);
+                    }
+                }
+            } else {
+                selections[type] = selections[type].filter(item => item !== name);
+            }
+        }
+
+        // 加载用户数据
+        async function loadUserData() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const result = await response.json();
+
+                if (result.success && result.user) {
+                    userData = result.user;
+
+                    // 更新头部信息
+                    document.getElementById('profileName').textContent = userId;
+                    document.getElementById('profileId').textContent = `ID: ${userId}`;
+                    document.getElementById('profileAvatar').textContent = userId.substring(0, 1);
+
+                    // 更新统计
+                    if (userData.historySelections) {
+                        document.getElementById('totalOrders').textContent = userData.historySelections.length;
+
+                        const avgRating = userData.historySelections
+                            .filter(s => s.likeRating)
+                            .reduce((sum, s, _, arr) => sum + s.likeRating / arr.length, 0);
+                        document.getElementById('avgRating').textContent = avgRating ? avgRating.toFixed(1) : '-';
+
+                        // 最爱品牌
+                        const brandCounts = {};
+                        userData.historySelections.forEach(s => {
+                            if (s.brandName) {
+                                brandCounts[s.brandName] = (brandCounts[s.brandName] || 0) + 1;
+                            }
+                        });
+                        const topBrand = Object.entries(brandCounts).sort((a, b) => b[1] - a[1])[0];
+                        document.getElementById('favoriteBrand').textContent = topBrand ? topBrand[0] : '-';
+                    }
+
+                    // 设置选中状态
+                    setSelectedOptions('diseaseOptions', userData.diseaseHistory, 'disease');
+                    setSelectedOptions('allergyOptions', userData.allergies, 'allergy');
+                    setSelectedOptions('flavorOptions', userData.preferredFlavors, 'flavor');
+
+                    if (userData.sweetLevel) {
+                        document.getElementById('sweetLevel').value = userData.sweetLevel;
+                    }
+
+                    if (userData.preferLowCalorie) {
+                        document.getElementById('preferLowCalorie').checked = true;
+                    }
+
+                    // 渲染历史记录
+                    renderHistory();
+                }
+            } catch (error) {
+                console.error('Load user data error:', error);
+            }
+        }
+
+        // 设置选中状态
+        function setSelectedOptions(containerId, values, type) {
+            if (!values) return;
+
+            selections[type] = [...values];
+
+            const container = document.getElementById(containerId);
+            container.querySelectorAll('.option-card').forEach(card => {
+                const name = card.querySelector('.option-name').textContent;
+                if (values.includes(name)) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        // 渲染历史记录
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+
+            if (!userData || !userData.historySelections || userData.historySelections.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-history">
+                        <i class="bi bi-cup-straw"></i>
+                        <p>暂无点单记录</p>
+                        <a href="/recommend" class="btn btn-primary btn-sm">去推荐</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const recentHistory = userData.historySelections.slice(-10).reverse();
+
+            container.innerHTML = recentHistory.map(item => {
+                const date = item.selectionTime ? new Date(item.selectionTime).toLocaleDateString() : '--';
+                const stars = item.likeRating ? '★'.repeat(item.likeRating) + '☆'.repeat(5 - item.likeRating) : '';
+
+                return `
+                    <div class="history-item">
+                        <div class="history-icon">🥤</div>
+                        <div class="history-info">
+                            <div class="history-name">${item.productName || '未知产品'}</div>
+                            <div class="history-brand">${item.brandName || ''} ${item.sugarLevel || ''} ${item.temperature || ''}</div>
+                        </div>
+                        <div class="history-meta">
+                            <div class="history-rating">${stars}</div>
+                            <div class="history-date">${date}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 保存档案
+        async function saveProfile() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>保存中...';
+
+            try {
+                const response = await fetch('/api/user/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        diseaseHistory: selections.disease,
+                        allergies: selections.allergy,
+                        preferredFlavors: selections.flavor,
+                        sweetLevel: parseInt(document.getElementById('sweetLevel').value),
+                        preferLowCalorie: document.getElementById('preferLowCalorie').checked
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('保存成功！');
+                } else {
+                    alert(result.message || '保存失败，请重试');
+                }
+            } catch (error) {
+                console.error('Save profile error:', error);
+                alert('网络错误，请重试');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-lg"></i> 保存修改';
+            }
+        }
+
+        // 登出
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('recommendResult');
+                window.location.href = '/login';
+            }
+        }
+
+        // 初始化
+        window.onload = function() {
+            loadUserData();
+        };
+    </script>
+</body>
+</html>

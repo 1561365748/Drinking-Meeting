@@ -1,0 +1,100 @@
+{
+  "exercises": [
+    {
+      "id": 1,
+      "name": "快走",
+      "caloriePerHour": 280,
+      "image": "/img/exercises/kuaisou.svg",
+      "description": "快走是一种低强度有氧运动，适合大多数人",
+      "intensity": "低"
+    },
+    {
+      "id": 2,
+      "name": "慢跑",
+      "caloriePerHour": 400,
+      "image": "/img/exercises/manpao.svg",
+      "description": "慢跑是燃烧脂肪的有效方式，对心肺功能有益",
+      "intensity": "中"
+    },
+    {
+      "id": 3,
+      "name": "游泳",
+      "caloriePerHour": 500,
+      "image": "/img/exercises/youyong.svg",
+      "description": "全身性运动，对关节友好，燃脂效果极佳",
+      "intensity": "高"
+    },
+    {
+      "id": 4,
+      "name": "骑自行车",
+      "caloriePerHour": 350,
+      "image": "/img/exercises/qizixingche.svg",
+      "description": "低冲击力运动，适合长时间进行",
+      "intensity": "中"
+    },
+    {
+      "id": 5,
+      "name": "跳绳",
+      "caloriePerHour": 600,
+      "image": "/img/exercises/tiaosheng.svg",
+      "description": "高效燃脂，短时间内消耗大量热量",
+      "intensity": "高"
+    },
+    {
+      "id": 6,
+      "name": "瑜伽",
+      "caloriePerHour": 180,
+      "image": "/img/exercises/yujia.svg",
+      "description": "提升柔韧性，缓解压力，适合放松身心",
+      "intensity": "低"
+    },
+    {
+      "id": 7,
+      "name": "HIIT高强度间歇",
+      "caloriePerHour": 700,
+      "image": "/img/exercises/hiit.svg",
+      "description": "短时间内高效燃脂，适合有一定运动基础的人",
+      "intensity": "高"
+    },
+    {
+      "id": 8,
+      "name": "爬山",
+      "caloriePerHour": 450,
+      "image": "/img/exercises/pashan.svg",
+      "description": "亲近自然，锻炼下肢力量和心肺功能",
+      "intensity": "中高"
+    },
+    {
+      "id": 9,
+      "name": "跳舞",
+      "caloriePerHour": 380,
+      "image": "/img/exercises/tiaowu.svg",
+      "description": "有趣的有氧运动，可以提升心情",
+      "intensity": "中"
+    },
+    {
+      "id": 10,
+      "name": "打羽毛球",
+      "caloriePerHour": 420,
+      "image": "/img/exercises/yumaoqiu.svg",
+      "description": "互动性强，锻炼全身协调能力",
+      "intensity": "中高"
+    },
+    {
+      "id": 11,
+      "name": "平板支撑",
+      "caloriePerHour": 250,
+      "image": "/img/exercises/pingban.svg",
+      "description": "核心训练，增强腹部和腰背部力量",
+      "intensity": "中"
+    },
+    {
+      "id": 12,
+      "name": "爬楼梯",
+      "caloriePerHour": 480,
+      "image": "/img/exercises/palouti.svg",
+      "description": "简单易行，对下肢力量有很好的锻炼效果",
+      "intensity": "中高"
+    }
+  ]
+}

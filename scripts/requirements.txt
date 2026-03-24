@@ -1,0 +1,7 @@
+# BERT-Whitening 编码器依赖
+torch>=1.9.0
+transformers>=4.20.0
+numpy>=1.19.0
+
+# 图片预处理依赖
+opencv-python>=4.5.0

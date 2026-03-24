@@ -1,0 +1,111 @@
+{
+  "brands": [
+    {
+      "id": 1,
+      "name": "喜茶",
+      "logo": "/img/brands/xicha.png",
+      "products": [
+        {"id": 101, "name": "多肉葡萄", "calorie": 170, "sugar": 35, "carbs": 42, "image": "/img/milktea/xicha/duorouputao.jpg"},
+        {"id": 102, "name": "芝芝莓莓", "calorie": 250, "sugar": 45, "carbs": 55, "image": "/img/milktea/xicha/zhizhimeimei.jpg"},
+        {"id": 103, "name": "满杯红柚", "calorie": 150, "sugar": 30, "carbs": 38, "image": "/img/milktea/xicha/manbeihongyou.jpg"},
+        {"id": 104, "name": "烤黑糖波波牛乳", "calorie": 420, "sugar": 65, "carbs": 78, "image": "/img/milktea/xicha/kaheitangbobo.jpg"},
+        {"id": 105, "name": "芝士奶盖绿茶", "calorie": 280, "sugar": 40, "carbs": 48, "image": "/img/milktea/xicha/zhishinigaolvcha.jpg"},
+        {"id": 106, "name": "芋泥波波奶茶", "calorie": 380, "sugar": 55, "carbs": 68, "image": "/img/milktea/xicha/yunibobo.jpg"},
+        {"id": 107, "name": "杨枝甘露", "calorie": 220, "sugar": 38, "carbs": 45, "image": "/img/milktea/xicha/yangzhiganlu.jpg"},
+        {"id": 108, "name": "纯绿妍茶底", "calorie": 60, "sugar": 5, "carbs": 12, "image": "/img/milktea/xicha/chunlvyan.jpg"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "奈雪的茶",
+      "logo": "/img/brands/naixue.png",
+      "products": [
+        {"id": 201, "name": "霸气橙子", "calorie": 160, "sugar": 32, "carbs": 40, "image": "/img/milktea/naixue/baqichengzi.jpg"},
+        {"id": 202, "name": "霸气芝士草莓", "calorie": 280, "sugar": 48, "carbs": 58, "image": "/img/milktea/naixue/baqizhishicaomei.jpg"},
+        {"id": 203, "name": "柠檬柚子茶", "calorie": 120, "sugar": 25, "carbs": 30, "image": "/img/milktea/naixue/ningmengyouzicha.jpg"},
+        {"id": 204, "name": "霸气玉油柑", "calorie": 140, "sugar": 28, "carbs": 35, "image": "/img/milktea/naixue/baqiyuyougan.jpg"},
+        {"id": 205, "name": "芝士茉莉初雪", "calorie": 260, "sugar": 42, "carbs": 52, "image": "/img/milktea/naixue/zhishimolichuxue.jpg"},
+        {"id": 206, "name": "宝藏鲜奶茶", "calorie": 320, "sugar": 50, "carbs": 62, "image": "/img/milktea/naixue/baozangxian.jpg"},
+        {"id": 207, "name": "龙井芝士奶盖", "calorie": 290, "sugar": 44, "carbs": 54, "image": "/img/milktea/naixue/longjingzhishi.jpg"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "蜜雪冰城",
+      "logo": "/img/brands/mixue.png",
+      "products": [
+        {"id": 301, "name": "冰鲜柠檬水", "calorie": 90, "sugar": 20, "carbs": 22, "image": "/img/milktea/mixue/bingxian柠檬.jpg"},
+        {"id": 302, "name": "珍珠奶茶", "calorie": 340, "sugar": 55, "carbs": 65, "image": "/img/milktea/mixue/zhenzhu.jpg"},
+        {"id": 303, "name": "黑糖珍珠奶茶", "calorie": 390, "sugar": 62, "carbs": 72, "image": "/img/milktea/mixue/heitangzhenzhu.jpg"},
+        {"id": 304, "name": "草莓摇摇奶昔", "calorie": 350, "sugar": 52, "carbs": 60, "image": "/img/milktea/mixue/caomeiyaoyao.jpg"},
+        {"id": 305, "name": "芋泥波波奶茶", "calorie": 360, "sugar": 54, "carbs": 66, "image": "/img/milktea/mixue/yunibobo.jpg"},
+        {"id": 306, "name": "蜜桃四季春", "calorie": 180, "sugar": 35, "carbs": 42, "image": "/img/milktea/mixue/mitaosijichun.jpg"},
+        {"id": 307, "name": "满杯百香果", "calorie": 160, "sugar": 32, "carbs": 38, "image": "/img/milktea/mixue/manbeibaixiangguo.jpg"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "茶百道",
+      "logo": "/img/brands/chabaidao.png",
+      "products": [
+        {"id": 401, "name": "杨枝甘露", "calorie": 230, "sugar": 40, "carbs": 48, "image": "/img/milktea/chabaidao/yangzhiganlu.jpg"},
+        {"id": 402, "name": "豆乳玉麒麟", "calorie": 340, "sugar": 52, "carbs": 58, "image": "/img/milktea/chabaidao/douruyuqilin.jpg"},
+        {"id": 403, "name": "西瓜啵啵", "calorie": 170, "sugar": 34, "carbs": 40, "image": "/img/milktea/chabaidao/xiguabobo.jpg"},
+        {"id": 404, "name": "茉莉奶绿", "calorie": 260, "sugar": 42, "carbs": 50, "image": "/img/milktea/chabaidao/molihailv.jpg"},
+        {"id": 405, "name": "超级杯水果茶", "calorie": 190, "sugar": 36, "carbs": 44, "image": "/img/milktea/chabaidao/chaojibeishuiguo.jpg"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "古茗",
+      "logo": "/img/brands/guming.png",
+      "products": [
+        {"id": 501, "name": "超A芝士葡萄", "calorie": 240, "sugar": 42, "carbs": 50, "image": "/img/milktea/guming/chaazhiputao.jpg"},
+        {"id": 502, "name": "龙井香青团", "calorie": 280, "sugar": 45, "carbs": 55, "image": "/img/milktea/guming/longjingxiangqingtuan.jpg"},
+        {"id": 503, "name": "芝士茉莉翠兰", "calorie": 250, "sugar": 40, "carbs": 48, "image": "/img/milktea/guming/zhishimolicuilan.jpg"},
+        {"id": 504, "name": "大叔奶茶", "calorie": 360, "sugar": 58, "carbs": 68, "image": "/img/milktea/guming/dashu.jpg"},
+        {"id": 505, "name": "布丁奶茶", "calorie": 340, "sugar": 54, "carbs": 64, "image": "/img/milktea/guming/buding.jpg"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "一点点",
+      "logo": "/img/brands/yidiandian.png",
+      "products": [
+        {"id": 601, "name": "四季奶青", "calorie": 280, "sugar": 45, "carbs": 52, "image": "/img/milktea/yidiandian/sijinaiqing.jpg"},
+        {"id": 602, "name": "冰淇淋红茶", "calorie": 320, "sugar": 50, "carbs": 58, "image": "/img/milktea/yidiandian/bingqilin.jpg"},
+        {"id": 603, "name": "波霸奶茶", "calorie": 350, "sugar": 56, "carbs": 65, "image": "/img/milktea/yidiandian/baobao.jpg"},
+        {"id": 604, "name": "茉莉绿茶", "calorie": 150, "sugar": 28, "carbs": 35, "image": "/img/milktea/yidiandian/molilvcha.jpg"},
+        {"id": 605, "name": "阿华田", "calorie": 380, "sugar": 60, "carbs": 72, "image": "/img/milktea/yidiandian/ahuatian.jpg"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "CoCo都可",
+      "logo": "/img/brands/coco.png",
+      "products": [
+        {"id": 701, "name": "奶茶三兄弟", "calorie": 380, "sugar": 60, "carbs": 70, "image": "/img/milktea/coco/sanxiongdi.jpg"},
+        {"id": 702, "name": "鲜百香双响炮", "calorie": 200, "sugar": 38, "carbs": 45, "image": "/img/milktea/coco/baixiang.jpg"},
+        {"id": 703, "name": "珍珠奶茶", "calorie": 340, "sugar": 55, "carbs": 62, "image": "/img/milktea/coco/zhenzhu.jpg"},
+        {"id": 704, "name": "芋泥奶茶", "calorie": 360, "sugar": 56, "carbs": 66, "image": "/img/milktea/coco/yuni.jpg"},
+        {"id": 705, "name": "杨枝甘露", "calorie": 240, "sugar": 42, "carbs": 50, "image": "/img/milktea/coco/yangzhiganlu.jpg"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "书亦烧仙草",
+      "logo": "/img/brands/shuyi.png",
+      "products": [
+        {"id": 801, "name": "烧仙草奶茶", "calorie": 320, "sugar": 52, "carbs": 60, "image": "/img/milktea/shuyi/shaoxiancao.jpg"},
+        {"id": 802, "name": "杨枝甘露烧仙草", "calorie": 280, "sugar": 46, "carbs": 55, "image": "/img/milktea/shuyi/yangzhiganlu.jpg"},
+        {"id": 803, "name": "芋泥烧仙草", "calorie": 350, "sugar": 55, "carbs": 65, "image": "/img/milktea/shuyi/yuni.jpg"},
+        {"id": 804, "name": "葡萄烧仙草", "calorie": 260, "sugar": 44, "carbs": 52, "image": "/img/milktea/shuyi/putao.jpg"}
+      ]
+    }
+  ],
+  "sizeMultiplier": {
+    "小杯": 0.7,
+    "中杯": 1.0,
+    "大杯": 1.3
+  }
+}

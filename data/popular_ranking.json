@@ -1,0 +1,139 @@
+{
+  "lastUpdated": "2024-03-19",
+  "rankings": [
+    {
+      "rank": 1,
+      "productId": 101,
+      "brandName": "喜茶",
+      "productName": "多肉葡萄",
+      "hotScore": 98,
+      "socialHotScore": 95,
+      "weeklySales": 150000,
+      "tags": ["清爽", "果茶", "低卡"],
+      "recommendReason": "本周最热门果茶，小红书好评率97%"
+    },
+    {
+      "rank": 2,
+      "productId": 104,
+      "brandName": "喜茶",
+      "productName": "烤黑糖波波牛乳",
+      "hotScore": 96,
+      "socialHotScore": 92,
+      "weeklySales": 120000,
+      "tags": ["浓郁", "经典", "甜品感"],
+      "recommendReason": "经典款永不过时，抖音爆款推荐"
+    },
+    {
+      "rank": 3,
+      "productId": 201,
+      "brandName": "奈雪的茶",
+      "productName": "霸气橙子",
+      "hotScore": 94,
+      "socialHotScore": 90,
+      "weeklySales": 98000,
+      "tags": ["清爽", "维C", "解腻"],
+      "recommendReason": "春季爆款，补充维生素C首选"
+    },
+    {
+      "rank": 4,
+      "productId": 401,
+      "brandName": "茶百道",
+      "productName": "杨枝甘露",
+      "hotScore": 92,
+      "socialHotScore": 88,
+      "weeklySales": 85000,
+      "tags": ["经典", "芒果", "甜品感"],
+      "recommendReason": "茶百道招牌，大众点评4.8分"
+    },
+    {
+      "rank": 5,
+      "productId": 501,
+      "brandName": "古茗",
+      "productName": "超A芝士葡萄",
+      "hotScore": 90,
+      "socialHotScore": 86,
+      "weeklySales": 78000,
+      "tags": ["芝士", "果茶", "网红"],
+      "recommendReason": "性价比之王，学生党最爱"
+    },
+    {
+      "rank": 6,
+      "productId": 302,
+      "brandName": "蜜雪冰城",
+      "productName": "珍珠奶茶",
+      "hotScore": 88,
+      "socialHotScore": 85,
+      "weeklySales": 200000,
+      "tags": ["经典", "平价", "百搭"],
+      "recommendReason": "全国销量冠军，价格亲民"
+    },
+    {
+      "rank": 7,
+      "productId": 603,
+      "brandName": "一点点",
+      "productName": "波霸奶茶",
+      "hotScore": 86,
+      "socialHotScore": 82,
+      "weeklySales": 110000,
+      "tags": ["经典", "Q弹", "自选配料"],
+      "recommendReason": "老牌网红店，配料自由搭配"
+    },
+    {
+      "rank": 8,
+      "productId": 701,
+      "brandName": "CoCo都可",
+      "productName": "奶茶三兄弟",
+      "hotScore": 85,
+      "socialHotScore": 80,
+      "weeklySales": 92000,
+      "tags": ["丰富", "满足", "经典"],
+      "recommendReason": "料超多，一次满足三种口感"
+    },
+    {
+      "rank": 9,
+      "productId": 107,
+      "brandName": "喜茶",
+      "productName": "杨枝甘露",
+      "hotScore": 84,
+      "socialHotScore": 78,
+      "weeklySales": 65000,
+      "tags": ["清爽", "芒果", "低糖可选"],
+      "recommendReason": "夏季限定回归，清爽不腻"
+    },
+    {
+      "rank": 10,
+      "productId": 801,
+      "brandName": "书亦烧仙草",
+      "productName": "烧仙草奶茶",
+      "hotScore": 82,
+      "socialHotScore": 76,
+      "weeklySales": 88000,
+      "tags": ["传统", "养生", "草本"],
+      "recommendReason": "传统美味，清热解暑"
+    }
+  ],
+  "toppingRankings": [
+    {"rank": 1, "toppingId": 1, "name": "珍珠/波霸", "hotScore": 98, "selectRate": "68%"},
+    {"rank": 2, "toppingId": 3, "name": "芝士奶盖", "hotScore": 95, "selectRate": "55%"},
+    {"rank": 3, "toppingId": 4, "name": "布丁", "hotScore": 88, "selectRate": "42%"},
+    {"rank": 4, "toppingId": 5, "name": "仙草", "hotScore": 85, "selectRate": "38%"},
+    {"rank": 5, "toppingId": 6, "name": "芋泥", "hotScore": 82, "selectRate": "35%"},
+    {"rank": 6, "toppingId": 7, "name": "红豆", "hotScore": 78, "selectRate": "30%"},
+    {"rank": 7, "toppingId": 2, "name": "椰果", "hotScore": 75, "selectRate": "28%"},
+    {"rank": 8, "toppingId": 8, "name": "芋圆", "hotScore": 72, "selectRate": "25%"},
+    {"rank": 9, "toppingId": 20, "name": "芝士波波", "hotScore": 70, "selectRate": "22%"},
+    {"rank": 10, "toppingId": 21, "name": "奥利奥碎", "hotScore": 68, "selectRate": "20%"}
+  ],
+  "userPreferences": [
+    {"userId": "user001", "likedProducts": [101, 102, 201, 301], "likedToppings": [1, 3, 4]},
+    {"userId": "user002", "likedProducts": [104, 501, 603], "likedToppings": [1, 6, 7]},
+    {"userId": "user003", "likedProducts": [101, 201, 401, 701], "likedToppings": [2, 5, 8]},
+    {"userId": "user004", "likedProducts": [102, 202, 502], "likedToppings": [3, 4, 20]},
+    {"userId": "user005", "likedProducts": [301, 302, 303], "likedToppings": [1, 2, 5]},
+    {"userId": "user006", "likedProducts": [101, 401, 801], "likedToppings": [5, 6, 7]},
+    {"userId": "user007", "likedProducts": [201, 202, 203], "likedToppings": [3, 4, 19]},
+    {"userId": "user008", "likedProducts": [501, 503, 504], "likedToppings": [1, 8, 22]},
+    {"userId": "user009", "likedProducts": [601, 602, 603], "likedToppings": [1, 6, 7]},
+    {"userId": "user010", "likedProducts": [701, 702, 703], "likedToppings": [1, 2, 3]}
+  ]
+}
