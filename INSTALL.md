@@ -1,4 +1,4 @@
-# 奶茶君 - 安装指南
+# 茶遇 - 安装指南
 
 ## 环境要求
 
@@ -96,7 +96,7 @@ A: 确保 `img/` 文件夹中有相应的图片文件。项目已包含100张示
 如果您已经安装好Java和Maven:
 
 ```bash
-cd E:\TestCL\milktea
+cd 项目文件夹
 mvn spring-boot:run
 ```
 
