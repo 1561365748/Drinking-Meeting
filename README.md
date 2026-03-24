@@ -184,10 +184,7 @@ similarity = cosineSimilarity(userVector, productVector);
 ## 项目结构
 
 ```
-milktea/
-├── pom.xml                         # Maven项目配置文件
-├── mvnw.cmd                        # Maven Wrapper启动脚本（Windows）
-├── 一键启动.bat                     # 一键启动脚本
+Drinking-Meeting/
 ├── README.md                       # 项目说明文档
 ├── INSTALL.md                      # 安装说明文档
 │
@@ -199,7 +196,7 @@ milktea/
 │   └── user_data.json              # 用户数据（自动生成）
 │
 ├── img/                            # 图片资源目录
-│   ├── milktea/                    # 奶茶产品图片
+│   ├── Drinking-Meeting/                    # 奶茶产品图片
 │   │   ├── xicha/                  # 喜茶
 │   │   ├── naixue/                 # 奈雪的茶
 │   │   ├── mixue/                  # 蜜雪冰城
@@ -211,8 +208,8 @@ milktea/
 │   ├── toppings/                   # 小料图片
 │   └── exercises/                  # 运动示意图
 │
-├── src/main/java/com/milktea/      # Java源代码
-│   ├── MilkteaApplication.java     # Spring Boot启动类
+├── src/main/java/com/Drinking-Meeting/      # Java源代码
+│   ├── Drinking-MeetingApplication.java     # Spring Boot启动类
 │   ├── controller/                 # 控制器层
 │   │   ├── PageController.java     # 页面路由控制器
 │   │   └── ApiController.java      # API接口控制器
@@ -226,8 +223,8 @@ milktea/
 │   │   └── ImageService.java       # 图片处理服务
 │   ├── entity/                     # 实体类
 │   │   ├── User.java               # 用户实体
-│   │   ├── MilkTeaBrand.java       # 品牌实体
-│   │   ├── MilkTeaProduct.java     # 产品实体
+│   │   ├── Drinking-MeetingBrand.java       # 品牌实体
+│   │   ├── Drinking-MeetingProduct.java     # 产品实体
 │   │   ├── Topping.java            # 小料实体
 │   │   ├── Exercise.java           # 运动实体
 │   │   ├── RecommendRequestV2.java # 推荐请求
@@ -276,7 +273,7 @@ milktea/
 ### 方式二：命令行启动
 ```bash
 # 进入项目目录
-cd E:\TestCL\milktea
+cd Drinking-Meeting
 
 # 使用Maven Wrapper启动
 mvnw.cmd spring-boot:run
